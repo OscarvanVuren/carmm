@@ -1,4 +1,4 @@
-def get_aims_calculator(dimensions, k_grid=None, xc="pbe", compute_forces="true", **kwargs):
+def get_aims_calculator(dimensions, k_grid=None, k_grid_density=None, xc="pbe", compute_forces="true", **kwargs):
     '''
     Method to return a "default" FHI-aims calculator.
     Note: This file should not be changed without consultation,
@@ -41,7 +41,12 @@ TODO: Reorder inputs so most necessary are first i.e. xc, compute_forces, k_grid
         fhi_calc.set(use_dipole_correction='true')
 
     if dimensions >= 2:
-        fhi_calc.set(k_grid=k_grid)
+
+        if k_grid != None
+            fhi_calc.set(k_grid=k_grid)
+
+        if k_grid_density != None
+            fhi_calc.set(k_grid_density=k_grid_density)
 
     return fhi_calc
 
