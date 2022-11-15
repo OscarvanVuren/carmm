@@ -42,11 +42,14 @@ TODO: Reorder inputs so most necessary are first i.e. xc, compute_forces, k_grid
 
     if dimensions >= 2:
 
-        if k_grid != None
-            fhi_calc.set(k_grid=k_grid)
+        if k_grid == None and k_grid_density in locals():
 
-        if k_grid_density != None
+            del[k_grid]
             fhi_calc.set(k_grid_density=k_grid_density)
+
+        else:
+
+            fhi_calc.set(k_grid=k_grid)
 
     return fhi_calc
 
