@@ -10,6 +10,8 @@ def get_aims_calculator(dimensions, k_grid=None, k_grid_density=None, xc="pbe", 
         Determines whether we have a "gas"-phase (0) or "periodic" structure (2 or 3)
     k_grid: List of integers
         Gives the k-grid sampling in x-, y- and z- direction. e.g. [3, 3, 3]
+    k_grid_density : Float
+        Samples k-grid with the given point density in /A^-1 in the x-, y-, and z- directions.
     xc: String
         XC of choice
     compute_forces: String
@@ -44,7 +46,6 @@ TODO: Reorder inputs so most necessary are first i.e. xc, compute_forces, k_grid
 
         if k_grid == None and k_grid_density != None:
 
-            del[k_grid]
             fhi_calc.set(k_grid_density=k_grid_density)
 
         else:
