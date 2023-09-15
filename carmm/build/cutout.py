@@ -109,7 +109,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
     from chemsh.io.tools import convert_atoms_to_frag
     from ase.io import read
 
-    bulk_frag = convert_atoms_to_frag(atoms=read(bulk_in_fname), connect_mode='ionic')
+    bulk_frag = objects.Fragment(coords=bulk_in_fname, connect_mode='ionic')
     bulk_frag.addCharges(charge_dict)
     bulk_frag.addShells(shell_atom, displace=0.0, charges={shell_atom: shell_charge})
 
@@ -122,7 +122,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
         bulk_origin = np.array([0, 0, 0])
     else:
         bulk_origin = origin
-
+    
     cluster = bulk_frag.construct_cluster(radius_cluster=cluster_r, origin=bulk_origin, adjust_charge=adjust_charge,
                                           radius_active=active_r, bq_margin=bq_margin, bq_density=bq_density,
                                           bq_layer=12.0)
@@ -141,7 +141,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
             qm_region = radius_qm_region(cluster.coords, radius)
 
     else:
-        qm_frag = convert_atoms_to_frag(atoms=read(qm_in_fname), connect_mode='ionic')
+        qm_frag = objects.Fragment(coords=qm_in_fname, connect_mode='ionic')
         qm_frag.addCharges(charge_dict)
         qm_frag.addShells(shell_atom, displace=0.0, charges={shell_atom: shell_charge})
 
@@ -309,7 +309,7 @@ def cut_atom_centred_region(atoms, symbol, size):
     expander = 5
     cell = atoms * (expander * size)
 
-    # Finds the atom index with greatest displacement from 0,0,0 where symbol=symbol
+    # Finds the atom index with greatest displacement from x=y=z=0 where symbol=symbol
     initialiser = False
     for index in [atom.index for atom in cell if atom.symbol == symbol]:
 
@@ -325,6 +325,7 @@ def cut_atom_centred_region(atoms, symbol, size):
             magnitude_index = index
 
     maximum = cell.positions[magnitude_index]
+
     mid = maximum * 0.5
 
     closest_index = find_closest_index(target=mid, atoms=cell, symbol=symbol)
@@ -361,3 +362,18 @@ def find_closest_index(target, atoms, symbol):
 
     return closest_index
 
+
+def find_radius(frag):
+    import numpy as np
+
+    max_coords = np.max(frag.coords, axis=0)
+    min_coords = np.min(frag.coords, axis=0)
+    x_diff = max_coords[0] - min_coords[0]
+    y_diff = max_coords[1] - min_coords[1]
+    z_diff = max_coords[2] - min_coords[2]
+
+    squares = (x_diff ** 2) + (y_diff ** 2) + (z_diff ** 2)
+    diameter = np.sqrt(squares)
+    radius = diameter/2
+
+    return radius
