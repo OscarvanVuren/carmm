@@ -109,7 +109,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
     from chemsh.io.tools import convert_atoms_to_frag
     from ase.io import read
 
-    bulk_frag = objects.Fragment(coords=bulk_in_fname, connect_mode='ionic')
+    bulk_frag = objects.fragment.Fragment(coords=bulk_in_fname, connect_mode='ionic')
     bulk_frag.addCharges(charge_dict)
     bulk_frag.addShells(shell_atom, displace=0.0, charges={shell_atom: shell_charge})
 
@@ -141,7 +141,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
             qm_region = radius_qm_region(cluster.coords, radius)
 
     else:
-        qm_frag = objects.Fragment(coords=qm_in_fname, connect_mode='ionic')
+        qm_frag = objects.fragment.Fragment(coords=qm_in_fname, connect_mode='ionic')
         qm_frag.addCharges(charge_dict)
         qm_frag.addShells(shell_atom, displace=0.0, charges={shell_atom: shell_charge})
 
