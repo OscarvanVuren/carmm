@@ -76,7 +76,7 @@ def transpose(periodic,cluster, start, stop, centre_periodic, centre_cluster, fi
     write = write(file_name, cluster)
 
 def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fname, out_fname, cluster_r,
-                 active_r, adjust_charge, bq_margin, bq_density, partition_mode='radius', origin=None, radius=5.0, del_atom_index=None):
+                 active_r, adjust_charge, bq_margin, bq_density, partition_mode='radius', bulk_origin=None, qm_origin=None, radius=5.0, del_atom_index=None):
     ''' Returns a .pun ChemShell file with region labelled atoms.
         Inherits lattice parameters from Atoms object. Also supports
         radius based partitioning. Origin is always set to 0,0,0
@@ -117,13 +117,15 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
     print(f"coords: {bulk_frag.coords}")
     print(f"names: {bulk_frag.names}")
 
-    if origin is None:
+    if bulk_origin is None:
         bulk_frag.coords = bulk_frag.coords - bulk_frag.centroid
-        bulk_origin = np.array([0, 0, 0])
+        origin = np.array([0, 0, 0])
     else:
-        bulk_origin = origin
-    
-    cluster = bulk_frag.construct_cluster(radius_cluster=cluster_r, origin=bulk_origin, adjust_charge=adjust_charge,
+       origin = bulk_origin
+#        bulk_frag.coords = bulk_frag.coords - bulk_origin
+#        origin = np.array([0, 0, 0])
+
+    cluster = bulk_frag.construct_cluster(radius_cluster=cluster_r, origin=origin, adjust_charge=adjust_charge,
                                           radius_active=active_r, bq_margin=bq_margin, bq_density=bq_density,
                                           bq_layer=12.0)
     cluster.save('cluster.pun', 'pun')
@@ -145,11 +147,13 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
         qm_frag.addCharges(charge_dict)
         qm_frag.addShells(shell_atom, displace=0.0, charges={shell_atom: shell_charge})
 
-        if origin is None:
+        if qm_origin is None:
             qm_frag.coords = qm_frag.coords - qm_frag.centroid
-            qm_origin = np.array([0, 0, 0])
+            qm_frac_origin = np.array([0, 0, 0])
         else:
-            qm_origin = origin
+            qm_frac_origin = qm_origin
+#            qm_frag.coords = qm_frag.coords - qm_origin
+#            qm_frac_origin = np.array([0, 0, 0])
 
         if partition_mode == 'unit_cell':
             qm_region = match_cell(cluster.coords, qm_frag.coords)
@@ -157,7 +161,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
             qm_region = radius_qm_region(cluster.coords, radius)
 
     # Partitioning routine uses a cartesian origin rather than a fractional one
-    qm_cart_origin = qm_origin * qm_frag.cell.consts[:3]
+    qm_cart_origin = qm_frac_origin * qm_frag.cell.consts[:3]
     partitioned_cluster = cluster.partition(cluster, qm_region=qm_region,
                                             origin=qm_cart_origin, cutoff_boundary=4.0,
                                             interface_exclude=["O"], qmmm_interface='explicit',
