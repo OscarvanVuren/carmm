@@ -121,7 +121,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
         bulk_frag.coords = bulk_frag.coords - bulk_frag.centroid
         origin = np.array([0, 0, 0])
     else:
-       origin = bulk_origin
+        origin = bulk_origin
 #        bulk_frag.coords = bulk_frag.coords - bulk_origin
 #        origin = np.array([0, 0, 0])
 
@@ -141,6 +141,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
         if partition_mode == 'radius':
             print('Radial partitioning')
             qm_region = radius_qm_region(cluster.coords, radius)
+            qm_cart_origin = bulk_origin
 
     else:
         qm_frag = objects.fragment.Fragment(coords=qm_in_fname, connect_mode='ionic')
@@ -157,11 +158,13 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
 
         if partition_mode == 'unit_cell':
             qm_region = match_cell(cluster.coords, qm_frag.coords)
+            # Partitioning routine uses a cartesian origin rather than a fractional one
+            qm_cart_origin = qm_frac_origin * qm_frag.cell.consts[:3]
         if partition_mode == 'radius':
             qm_region = radius_qm_region(cluster.coords, radius)
+            qm_cart_origin = origin
 
-    # Partitioning routine uses a cartesian origin rather than a fractional one
-    qm_cart_origin = qm_frac_origin * qm_frag.cell.consts[:3]
+
     partitioned_cluster = cluster.partition(cluster, qm_region=qm_region,
                                             origin=qm_cart_origin, cutoff_boundary=4.0,
                                             interface_exclude=["O"], qmmm_interface='explicit',
@@ -178,6 +181,7 @@ def cif2labelpun(charge_dict, shell_atom, shell_charge, bulk_in_fname, qm_in_fna
     bulk_frag.save('bulk_frag.pun', 'pun')
     qm_frag.save('qm_frag.pun', 'pun')
 
+#def build_surface
 
 def expand_cell(frag, cell_dimensions):
     import numpy as np
