@@ -212,4 +212,67 @@ def plot_energy_profile(data, x_labels, **kwargs):
 
     return plt
 
+def get_colour_palette(name):
+
+    """
+    Function to get some predefined colour palettes for use in matplotlib.
+    Palettes are dicts containing names and associated hex codes.
+    name (str) name of palette to select
+    """
+
+    tol = {"blue":"#332288",
+           "green":"#117733",
+           "mint":"#44AA99",
+           "cyan":"#88CCEE",
+           "yellow":"#DDCC77",
+           "pink":"#CC6677",
+           "purple":"#AA4499",
+           "claret":"#882255"
+          }
+    ibm = {"blue":"#648FFF",
+          "purple":"#785EF0",
+          "pink":"#DC267F",
+          "orang":"#FE6100",
+          "yellow":"#FFB000"
+          }
+    wong = {"black":"#000000",
+            "orang":"#E69F00",
+            "cyan":"#56B4E9",
+            "mint":"#009E73",
+            "yellow":"#F0E442",
+            "blue":"#0072B2",
+            "tang":"#D55E00",
+            "pink":"#CC79A7"
+            }
+    rsc = {"hero":"#004976", # RSC main blue colour, use sparingly
+           "blue":"#48A9C5",
+           "yellow":"#EEDC00",
+           "lime":"#97D700",
+           "fuchs":"#DA1884",
+           "plum":"#991E66",
+           "tang":"#FF9E1B",
+           "orang":"#FC4C02",
+           "scarl":"#C8102E",
+           "jade":"#006F62",
+           "forest":"#115E67",
+           "turq":"#71DBD4",
+           "graph":"#54585A"
+           } # RSC colour scheme from RSC Brand Guidelines document 2019
+    
+    match name:
+        case "colourblind":
+            palette = ibm
+        case "tol":
+            palette=tol
+        case "ibm":
+            palette=ibm
+        case "wong":
+            palette=wong
+        case "rsc":
+            palette=rsc
+        case _:
+            print(f"{name} is not a valid palette.")
+
+    return palette
+
 
