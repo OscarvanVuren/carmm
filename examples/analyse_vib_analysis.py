@@ -1,5 +1,3 @@
-import numpy as np
-
 '''Example of script to analyse vibrational trajectories
 from a vibrational calculation using ASE'''
 
@@ -7,6 +5,7 @@ def test_vib_analysis():
     from carmm.analyse.vibrations import vib_analysis, plot_vibration_data, vib_disps, characterise_vib
     from ase.io import read
     from ase.visualize import view
+    import numpy as np
 
     # Get H2O vib data calculated using ASE (EMT)
     file = 'data/H2O_vib/vib.1.traj'
