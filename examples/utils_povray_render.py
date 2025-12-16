@@ -77,7 +77,6 @@ def test_povray_render():
     assert gen_proj_sett == {
         'rotation': '0x,0y,0z',
         'radii': 1.0,
-        'colors': None,
     }
     assert povray_sett == {
         'camera_type': 'orthographic angle 5',
